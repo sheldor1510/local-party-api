@@ -35,11 +35,11 @@ const users = {};
 
 io.on('connection', socket=>{
     socket.on('new-user-joined', data =>{
-        users[socket.id] = {name: data.name, roomCode: data.roomCode}; 
-        socket.broadcast.emit('user-joined', {name: data.name, roomCode: users[socket.id].roomCode})
+        users[socket.id] = {name: data.name, roomCode: data.roomCode, pfp: data.pfp}; 
+        socket.broadcast.emit('user-joined', {name: data.name, roomCode: data.roomCode, pfp: data.pfp})
     })
 
     socket.on('send', message =>{
-        socket.broadcast.emit('receive', {message: message, name: users[socket.id].name, roomCode: users[socket.id].roomCode})
+        socket.broadcast.emit('receive', {message: message, name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp})
     })
 })

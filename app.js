@@ -42,9 +42,4 @@ io.on('connection', socket=>{
     socket.on('send', message =>{
         socket.broadcast.emit('receive', {message: message, name: users[socket.id].name, roomCode: users[socket.id].roomCode})
     })
-
-    socket.on('disconnect', name=>{
-        socket.broadcast.emit('left', {name: users[socket.id].name, roomCode: users[socket.id].roomCode})
-        delete users[socket.id];
-    })
 })

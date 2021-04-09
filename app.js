@@ -49,6 +49,6 @@ io.on('connection', socket=>{
     })
 
     socket.on('playerControl', data => { 
-        socket.broadcast.emit('playerControlUpdate', {message: data.message, context: data.context, roomCode: users[socket.id].roomCode})
+        socket.broadcast.emit('playerControlUpdate', {message: data.message, context: data.context, roomCode: users[socket.id].roomCode, username: users[socket.id].name})
     })
 })

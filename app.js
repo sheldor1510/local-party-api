@@ -37,6 +37,7 @@ io.on('connection', socket=>{
     socket.on('new-user-joined', data => {
         users[socket.id] = {name: data.name, roomCode: data.roomCode, pfp: data.pfp}; 
         socket.broadcast.emit('user-joined', {name: data.name, roomCode: data.roomCode, pfp: data.pfp})
+        socket.emit('members', {roomCode: data.roomCode,members: Object.keys(users).length})
     })
 
     socket.on('send', message => {

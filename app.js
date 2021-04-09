@@ -36,8 +36,11 @@ const users = {};
 io.on('connection', socket=>{
     socket.on('new-user-joined', data => {
         users[socket.id] = {name: data.name, roomCode: data.roomCode, pfp: data.pfp}; 
-        socket.broadcast.emit('user-joined', {name: data.name, roomCode: data.roomCode, pfp: data.pfp})
-        socket.emit('members', {roomCode: data.roomCode,members: Object.keys(users).length})
+        socket.broadcast.emit('user-joined', {name: data.name, roomCode: data.roomCode, pfp: data.pfp, members: Object.keys(users).length})
+    })
+
+    socket.on('increaseMembers', data => {
+        socket.emit('updateMembers', {roomCode: data.roomCode, members : data.members})
     })
 
     socket.on('send', message => {
@@ -47,7 +50,7 @@ io.on('connection', socket=>{
     socket.on('disconnected', name => {
         socket.broadcast.emit('left', {name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp})
         delete users[socket.id]
-        socket.emit('members', {roomCode: data.roomCode,members: Object.keys(users).length})
+        socket.emit('updateMembers', {roomCode: data.roomCode , members: Object.keys(users).length})
         socket.disconnect(true);
     })
 

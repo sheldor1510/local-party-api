@@ -42,4 +42,9 @@ io.on('connection', socket=>{
     socket.on('send', message =>{
         socket.broadcast.emit('receive', {message: message, name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp})
     })
+
+    socket.on('disconnected', name=>{
+        socket.broadcast.emit('left', {name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp})
+        socket.disconnect(true);
+    })
 })

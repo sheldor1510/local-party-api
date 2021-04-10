@@ -37,14 +37,15 @@ io.on('connection', socket=>{
     socket.on('new-user-joined', data => {
         users[socket.id] = {name: data.name, roomCode: data.roomCode, pfp: data.pfp}; 
         socket.broadcast.emit('user-joined', {name: data.name, roomCode: data.roomCode, pfp: data.pfp})
+        socket.emit('updateMemberInfo', {roomCode: data.roomCode, members: Object.keys(users).length})
     })
 
     socket.on('send', message => {
         socket.broadcast.emit('receive', {message: message, name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp})
     })
 
-    socket.on('disconnected', name => {
-        socket.broadcast.emit('left', {name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp})
+    socket.on('disconnectUser', name => {
+        socket.broadcast.emit('left', {name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp, members: Object.keys(users).length -1})
         delete users[socket.id]
         socket.disconnect(true);
     })

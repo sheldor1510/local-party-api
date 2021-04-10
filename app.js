@@ -39,7 +39,7 @@ io.on('connection', socket=>{
         socket.broadcast.emit('user-joined', {name: data.name, roomCode: data.roomCode, pfp: data.pfp, members: Object.keys(users).length})
         setTimeout(() => {
             socket.emit('updateMemberInfo', {roomCode: data.roomCode, members: Object.keys(users).length})
-        }, 500);
+        }, 200);
     })
 
     socket.on('send', message => {

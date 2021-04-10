@@ -42,9 +42,9 @@ io.on('connection', socket=>{
                 newUsers[key] = users[key]
             }
         }
-        socket.broadcast.emit('user-joined', {name: data.name, roomCode: data.roomCode, pfp: data.pfp, members: newUsers.length})
+        socket.broadcast.emit('user-joined', {name: data.name, roomCode: data.roomCode, pfp: data.pfp, members: Object.keys(newUsers).length})
         setTimeout(() => {
-            socket.emit('updateMemberInfo', {roomCode: data.roomCode, members: newUsers.length})
+            socket.emit('updateMemberInfo', {roomCode: data.roomCode, members: Object.keys(newUsers).length})
         }, 200);
     })
 
@@ -59,7 +59,7 @@ io.on('connection', socket=>{
                 newUsers[key] = users[key]
             }
         }
-        socket.broadcast.emit('left', {name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp, members: newUsers.length -1})
+        socket.broadcast.emit('left', {name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp, members: Object.keys(newUsers).length -1})
         delete users[socket.id]
         socket.disconnect(true);
     })

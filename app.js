@@ -36,10 +36,10 @@ const users = {};
 io.on('connection', socket=>{
     socket.on('new-user-joined', data => {
         users[socket.id] = {name: data.name, roomCode: data.roomCode, pfp: data.pfp}; 
-        socket.broadcast.emit('user-joined', {name: data.name, roomCode: data.roomCode, pfp: data.pfp})
+        socket.broadcast.emit('user-joined', {name: data.name, roomCode: data.roomCode, pfp: data.pfp, members: Object.keys(users).length})
         setTimeout(() => {
             socket.emit('updateMemberInfo', {roomCode: data.roomCode, members: Object.keys(users).length})
-        }, 1000);
+        }, 500);
     })
 
     socket.on('send', message => {

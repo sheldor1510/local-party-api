@@ -64,18 +64,6 @@ io.on('connection', socket=>{
         socket.disconnect(true);
     })
 
-    socket.on('disconnect', name => {
-        let newUsers = {}
-        for (const [key, value] of Object.entries(users)) {
-            if(value.roomCode == users[socket.id].roomCode) {
-                newUsers[key] = users[key]
-            }
-        }
-        socket.broadcast.emit('left', {name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp, members: Object.keys(newUsers).length -1})
-        delete users[socket.id]
-        socket.disconnect(true);
-    })
-
 
     socket.on('playerControl', data => { 
         socket.broadcast.emit('playerControlUpdate', {message: data.message, context: data.context, roomCode: users[socket.id].roomCode, username: users[socket.id].name})

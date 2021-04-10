@@ -47,7 +47,7 @@ io.on('connection', socket=>{
     })
 
     socket.on('disconnectUser', name => {
-        socket.broadcast.emit('left', {name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp, members: Object.keys(users).length -1})
+        socket.broadcast.emit('left', {name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp, members: Object.keys(users).filter(key => users[key] == data.roomCode).length -1})
         delete users[socket.id]
         socket.disconnect(true);
     })

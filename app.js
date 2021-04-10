@@ -36,9 +36,15 @@ const users = {};
 io.on('connection', socket=>{
     socket.on('new-user-joined', data => {
         users[socket.id] = {name: data.name, roomCode: data.roomCode, pfp: data.pfp}; 
-        socket.broadcast.emit('user-joined', {name: data.name, roomCode: data.roomCode, pfp: data.pfp, members: Object.keys(users).filter(key => users[key] == data.roomCode).length})
+        let newUsers = {}
+        for (const [key, value] of Object.entries(users)) {
+            if(value.roomCode == data.roomCode) {
+                newUsers[key] = users[key]
+            }
+        }
+        socket.broadcast.emit('user-joined', {name: data.name, roomCode: data.roomCode, pfp: data.pfp, members: newUsers.length})
         setTimeout(() => {
-            socket.emit('updateMemberInfo', {roomCode: data.roomCode, members: Object.keys(users).filter(key => users[key] == data.roomCode).length})
+            socket.emit('updateMemberInfo', {roomCode: data.roomCode, members: newUsers.length})
         }, 200);
     })
 
@@ -47,7 +53,13 @@ io.on('connection', socket=>{
     })
 
     socket.on('disconnectUser', name => {
-        socket.broadcast.emit('left', {name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp, members: Object.keys(users).filter(key => users[key] == data.roomCode).length -1})
+        let newUsers = {}
+        for (const [key, value] of Object.entries(users)) {
+            if(value.roomCode == users[socket.id].roomCode) {
+                newUsers[key] = users[key]
+            }
+        }
+        socket.broadcast.emit('left', {name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp, members: newUsers.length -1})
         delete users[socket.id]
         socket.disconnect(true);
     })

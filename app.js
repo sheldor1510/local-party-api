@@ -65,14 +65,18 @@ io.on('connection', socket=>{
     })
     
     socket.on('disconnect', name =>{
-        let newUsers = {}
-        for (const [key, value] of Object.entries(users)) {
-            if(value.roomCode == users[socket.id].roomCode) {
-                newUsers[key] = users[key]
+        try {
+            let newUsers = {}
+            for (const [key, value] of Object.entries(users)) {
+                if(value.roomCode == users[socket.id].roomCode) {
+                    newUsers[key] = users[key]
+                }
             }
+            socket.broadcast.emit('leftdefault', {name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp, members: Object.keys(newUsers).length -1})
+            delete users[socket.id]
+        } catch (error) {
+            console.log(error)
         }
-        socket.broadcast.emit('leftdefault', {name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp, members: Object.keys(newUsers).length -1})
-        delete users[socket.id]
     })
 
     socket.on('playerControl', data => { 

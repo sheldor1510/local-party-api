@@ -36,6 +36,7 @@ const users = {};
 io.on('connection', socket=>{
     socket.on('new-user-joined', data => {
         users[socket.id] = {name: data.name, roomCode: data.roomCode, pfp: data.pfp}; 
+        socket.join(data.roomCode);
         let newUsers = {}
         for (const [key, value] of Object.entries(users)) {
             if(value.roomCode == data.roomCode) {
@@ -45,11 +46,11 @@ io.on('connection', socket=>{
         socket.broadcast.emit('user-joined', {name: data.name, roomCode: data.roomCode, pfp: data.pfp, members: Object.keys(newUsers).length})
         setTimeout(() => {
             socket.emit('updateMemberInfo', {roomCode: data.roomCode, members: Object.keys(newUsers).length})
-        }, 200);
+        }, 500);
     })
 
     socket.on('send', message => {
-        socket.broadcast.emit('receive', {message: message, name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp})
+        socket.to(users[socket.id].roomCode).emit('receive', {message: message, name: users[socket.id].name, pfp: users[socket.id].pfp})
     })
 
     socket.on('disconnectUser', name => {
@@ -59,27 +60,27 @@ io.on('connection', socket=>{
                 newUsers[key] = users[key]
             }
         }
-        socket.broadcast.emit('left', {name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp, members: Object.keys(newUsers).length -1})
+        socket.to(users[socket.id].roomCode).emit('left', {name: users[socket.id].name, pfp: users[socket.id].pfp, members: Object.keys(newUsers).length -1})
         delete users[socket.id]
         socket.disconnect(true);
     })
+
+    socket.on('playerControl', data => { 
+        socket.to(data.roomCode).emit('playerControlUpdate', {message: data.message, context: data.context, username: users[socket.id].name})
+    })
     
-    socket.on('disconnect', name =>{
+    socket.on('disconnect', data =>{
         try {
             let newUsers = {}
             for (const [key, value] of Object.entries(users)) {
-                if(value.roomCode == users[socket.id].roomCode) {
+                if(value.roomCode == data.roomCode) {
                     newUsers[key] = users[key]
                 }
             }
-            socket.broadcast.emit('leftdefault', {name: users[socket.id].name, roomCode: users[socket.id].roomCode, pfp: users[socket.id].pfp, members: Object.keys(newUsers).length -1})
+            socket.to(data.roomCode).emit('leftdefault', {name: data.name, pfp: data.pfp, members: Object.keys(newUsers).length -1})
             delete users[socket.id]
         } catch (error) {
             console.log(error)
         }
-    })
-
-    socket.on('playerControl', data => { 
-        socket.broadcast.emit('playerControlUpdate', {message: data.message, context: data.context, roomCode: users[socket.id].roomCode, username: users[socket.id].name})
     })
 })

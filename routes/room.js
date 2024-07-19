@@ -2,7 +2,7 @@ const router = require('express').Router();
 const Room = require('../models/Room')
 const axios = require('axios')
 
-router.get('/create', (req, res) => {
+router.post('/create', (req, res) => {
     const { roomName, roomCode, videoSize } = req.body
     let newRoom = Room({
         roomName,

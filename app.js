@@ -6,7 +6,7 @@ const socketIO = require("socket.io")
 require('dotenv').config()
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 4000;
 
 const server = app.listen(port, err => {
     console.log(`API listening on port ${port}.`);

@@ -32,22 +32,14 @@ router.post('/join', (req, res) => {
                 }
             )
         } else {
-            if(room.videoSize != videoSize) {
-                res.send(
-                    {
-                        message: "video is different than the host's video."
-                    }
-                )
-            } else {
-                res.send(
-                    {
-                        roomCode,
-                        videoSize,
-                        roomName: room.roomName,
-                        message: "success"
-                    }
-                )
-            }
+            res.send(
+                {
+                    roomCode,
+                    videoSize,
+                    roomName: room.roomName,
+                    message: "success"
+                }
+            )
         }
     })
 })
